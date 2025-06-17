@@ -30,9 +30,9 @@ xrp_data['Market_Sentiment'] = np.where(xrp_data['Close'].diff() > 0, 'positive'
 xrp_data['ODL_Growth'] = np.linspace(0, 5, len(xrp_data))
 
 # ---- Define Features and Target ----
-numeric_features = ['Year', 'Month', 'ODL_Growth']
 categorical_features = ['BTC_Trend', 'Market_Sentiment']
-features = numeric_features + categorical_features
+numeric_features = ['Year', 'Month', 'ODL_Growth']
+features = categorical_features + numeric_features
 target = 'Close'
 
 # ---- Preprocessing ----
@@ -72,10 +72,10 @@ market_sentiment = st.selectbox("Market Sentiment", ["positive", "negative"])
 odl_growth = st.slider("ODL Growth Stage", 0.0, 5.0, 3.0)
 
 user_input = pd.DataFrame([{
-    'Year': year,
-    'Month': month,
     'BTC_Trend': btc_trend,
     'Market_Sentiment': market_sentiment,
+    'Year': year,
+    'Month': month,
     'ODL_Growth': odl_growth
 }])
 
