@@ -28,24 +28,28 @@ xrp_data.dropna(inplace=True)
 xrp_data['BTC_Trend'] = np.where(xrp_data['BTC_Price'].diff() > 0, 'bull', 'bear')
 xrp_data['Market_Sentiment'] = np.where(xrp_data['Close'].diff() > 0, 'positive', 'negative')
 xrp_data['ODL_Growth'] = np.linspace(0, 5, len(xrp_data))
-xrp_data['SEC_Status'] = 'none'
 
-# ---- Model Training ----
-features = ['Year', 'Month', 'BTC_Trend', 'Market_Sentiment', 'ODL_Growth']
-target = 'Close'
-categorical_features = ['BTC_Trend', 'Market_Sentiment']
+# ---- Define Features and Target ----
 numeric_features = ['Year', 'Month', 'ODL_Growth']
+categorical_features = ['BTC_Trend', 'Market_Sentiment']
+features = numeric_features + categorical_features
+target = 'Close'
 
-preprocessor = ColumnTransformer([
-    ('num', 'passthrough', numeric_features),
-    ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
-])
+# ---- Preprocessing ----
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+    ],
+    remainder='passthrough'
+)
 
+# ---- Model Pipeline ----
 model = Pipeline([
     ('preprocessor', preprocessor),
     ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
 ])
 
+# ---- Train/Test Split ----
 X = xrp_data[features]
 y = xrp_data[target]
 
